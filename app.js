@@ -77,18 +77,15 @@ if (authForm) {
 }
 
 // ====== ROUTING ROUTINES BASED ON PROFILE STATE ======
-// This listener runs in real-time across open tabs/windows
 auth.onAuthStateChanged(user => {
     if (user) {
         currentUserId = user.uid;
-        // If logged in but lingering on index.html, auto-route forward instantly
         if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
             window.location.href = 'dashboard.html';
         } else if (window.location.pathname.includes('dashboard.html')) {
             initDashboard();
         }
     } else {
-        // If logged out anywhere, boot immediately back to authentication page
         if (window.location.pathname.includes('dashboard.html')) {
             window.location.href = 'index.html';
         }
@@ -96,7 +93,7 @@ auth.onAuthStateChanged(user => {
 });
 
 function initDashboard() {
-    // Live update personal configuration parameters
+    // Live update personal profile configuration parameters
     db.collection('users').doc(currentUserId).onSnapshot(doc => {
         if(doc.exists) {
             const data = doc.data();
@@ -105,9 +102,11 @@ function initDashboard() {
                 document.getElementById('current-user-status-msg').innerText = data.statusMsg;
             }
         }
+    }, err => {
+        console.error("Firestore error: Check your Security Rules configuration", err);
     });
 
-    // Action implementation to mutate personalized text notes
+    // Action implementation to update personalized bio text notes
     document.getElementById('update-status-btn').addEventListener('click', () => {
         const currentNote = document.getElementById('current-user-status-msg').innerText;
         const newNote = prompt("Update your profile status note:", currentNote);
@@ -125,7 +124,7 @@ function initDashboard() {
         });
     });
 
-    // FIND FRIENDS: Explicit email lookup layout
+    // FIND FRIENDS: Explicit email lookups
     const addUserBtn = document.getElementById('add-user-btn');
     if (addUserBtn) {
         addUserBtn.addEventListener('click', () => {
@@ -151,7 +150,7 @@ function initDashboard() {
         });
     }
 
-    // Group generation triggers
+    // Group generation tool hookup
     document.getElementById('create-group-btn').addEventListener('click', () => {
         const groupName = prompt("Enter new Group Name:");
         if (!groupName) return;
@@ -160,7 +159,30 @@ function initDashboard() {
             isGroup: true,
             participants: [currentUserId],
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        }).then(() => alert("Group Created!"));
+        }).then(() => alert("Group Created successfully!"));
+    });
+
+    // GROUP DELETION HANDLER
+    document.getElementById('delete-group-btn').addEventListener('click', () => {
+        if (!currentChatId || currentChatType !== 'group') return;
+        
+        if (confirm("Are you sure you want to permanently delete this group and all its message records?")) {
+            // 1. Clear inner subcollection messages safely
+            db.collection('chats').doc(currentChatId).collection('messages').get().then(snap => {
+                let batch = db.batch();
+                snap.forEach(doc => batch.delete(doc.ref));
+                return batch.commit();
+            }).then(() => {
+                // 2. Clear main root chat document
+                return db.collection('chats').doc(currentChatId).delete();
+            }).then(() => {
+                alert("Group deleted successfully.");
+                // 3. Reset application display panels back to standard state
+                document.getElementById('active-chat-container').style.display = 'none';
+                document.getElementById('no-chat-selected').style.display = 'flex';
+                currentChatId = null;
+            }).catch(err => alert("Error deleting group room: " + err.message));
+        }
     });
 
     loadSidebarChannels();
@@ -171,25 +193,27 @@ function initDashboard() {
 function loadSidebarChannels() {
     const sidebarContainer = document.getElementById('chats-sidebar-list');
 
+    // Setup direct user queries real-time updates
     db.collection('users').onSnapshot(snapshot => {
         sidebarContainer.innerHTML = '';
         
         let userHeader = document.createElement('div');
-        userHeader.style.padding = "5px 15px"; userHeader.style.fontWeight = "bold"; userHeader.innerText = "DIRECT MESSAGES";
+        userHeader.className = 'list-section-header';
+        userHeader.innerText = "DIRECT MESSAGES";
         sidebarContainer.appendChild(userHeader);
 
         snapshot.forEach(doc => {
             const userData = doc.data();
             if (userData.uid === currentUserId) return;
 
-            const displayNote = userData.statusMsg ? userData.statusMsg : "No status set.";
+            const displayNote = userData.statusMsg ? userData.statusMsg : "No status note configured.";
 
             const row = document.createElement('div');
             row.className = 'user-item';
             row.innerHTML = `
-                <div style="display: flex; flex-direction: column; gap: 3px; overflow: hidden; flex: 1;">
-                    <strong style="color: #111b21;">${userData.name}</strong>
-                    <span style="font-size: 12px; color: #667781; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${displayNote}</span>
+                <div class="item-main-details">
+                    <strong>${userData.name}</strong>
+                    <span>${displayNote}</span>
                 </div>
                 <div class="status-dot ${userData.status === 'online' ? 'online' : 'offline'}"></div>
             `;
@@ -198,15 +222,26 @@ function loadSidebarChannels() {
         });
 
         let groupHeader = document.createElement('div');
-        groupHeader.style.padding = "15px 15px 5px 15px"; groupHeader.style.fontWeight = "bold"; groupHeader.innerText = "GROUPS";
+        groupHeader.className = 'list-section-header';
+        groupHeader.style.marginTop = "10px";
+        groupHeader.innerText = "GROUPS";
         sidebarContainer.appendChild(groupHeader);
 
+        // Track changes on structural group collection targets
         db.collection('chats').where('isGroup', '==', true).onSnapshot(groupSnap => {
+            // Remove previous rendered items inside groups stack to avoid repetitions
+            const existingGroups = sidebarContainer.querySelectorAll('.group-list-item-row');
+            existingGroups.forEach(el => el.remove());
+
             groupSnap.forEach(gDoc => {
                 const gData = gDoc.data();
                 const row = document.createElement('div');
-                row.className = 'user-item';
-                row.innerHTML = `<div><strong>👥 ${gData.name}</strong></div>`;
+                row.className = 'user-item group-list-item-row';
+                row.innerHTML = `
+                    <div class="item-main-details">
+                        <strong>👥 ${gData.name}</strong>
+                        <span>Tap to open conversation</span>
+                    </div>`;
                 row.addEventListener('click', () => startGroupChat(gDoc.id, gData.name));
                 sidebarContainer.appendChild(row);
             });
@@ -220,13 +255,13 @@ function startPrivateChat(targetUid, targetName) {
     document.getElementById('no-chat-selected').style.display = 'none';
     document.getElementById('active-chat-container').style.display = 'flex';
     document.getElementById('active-chat-title').innerText = targetName;
+    document.getElementById('delete-group-btn').style.display = 'none'; // Hide on standard private chats
 
-    // Display the recipient's status note right at the top header area
     db.collection('users').doc(targetUid).get().then(doc => {
         if(doc.exists && doc.data().statusMsg) {
             document.getElementById('active-chat-status').innerText = doc.data().statusMsg;
         } else {
-            document.getElementById('active-chat-status').innerText = "";
+            document.getElementById('active-chat-status').innerText = "Available";
         }
     });
 
@@ -256,7 +291,8 @@ function startGroupChat(groupId, groupName) {
     document.getElementById('no-chat-selected').style.display = 'none';
     document.getElementById('active-chat-container').style.display = 'flex';
     document.getElementById('active-chat-title').innerText = groupName;
-    document.getElementById('active-chat-status').innerText = "Group conversation";
+    document.getElementById('active-chat-status').innerText = "Group Session Logs";
+    document.getElementById('delete-group-btn').style.display = 'block'; // Reveal deletion controls
 
     db.collection('chats').doc(groupId).update({
         participants: firebase.firestore.FieldValue.arrayUnion(currentUserId)
@@ -286,7 +322,6 @@ function listenForMessages(chatId) {
                 
                 let contentHTML = `<div><strong>${mData.senderName}</strong>: <span id="text-${doc.id}">${mData.message}</span></div>`;
                 
-                // FILE DISPLAY RULES:
                 if (mData.mediaUrl) {
                     if (mData.mediaType.startsWith('image/')) {
                         contentHTML += `<img src="${mData.mediaUrl}" class="msg-media" />`;
@@ -308,17 +343,19 @@ function listenForMessages(chatId) {
             });
             msgBox.scrollTop = msgBox.scrollHeight;
             
-            // Notification dispatch
+            // System Notification Engine logs
             if(!snapshot.metadata.hasPendingWrites && snapshot.docs.length > 0) {
                let lastMsg = snapshot.docs[snapshot.docs.length - 1].data();
                if(lastMsg.senderId !== currentUserId && Notification.permission === "granted") {
                    new Notification(`Mwamini Chat: ${lastMsg.senderName}`, { body: lastMsg.message });
                }
             }
+        }, err => {
+            console.log("Chat history stream closed out or deleted.");
         });
 }
 
-// ====== OUTPUT DISPATCH AND FILE UPLOAD HANDLING ======
+// ====== SEND UTILITIES ======
 function setupMessageSender() {
     const sendBtn = document.getElementById('send-btn');
     const msgInput = document.getElementById('message-input');
@@ -333,7 +370,6 @@ function setupMessageSender() {
         db.collection('users').doc(currentUserId).get().then(userDoc => {
             const senderName = userDoc.data().name;
 
-            // Handle file storage if data structure is selected
             if (file && storage) {
                 const fileRef = storage.ref().child(`chats/${currentChatId}/${Date.now()}_${file.name}`);
                 fileRef.put(file).then(snapshot => snapshot.ref.getDownloadURL()).then(downloadUrl => {
@@ -363,7 +399,7 @@ function setupMessageSender() {
     msgInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendTrigger(); });
 }
 
-// ====== MESSAGE MODIFICATION HELPER UTILITIES ======
+// ====== EDIT / DELETE MESSAGE LOGIC ======
 window.editMessage = function(chatId, msgId) {
     const oldText = document.getElementById(`text-${msgId}`).innerText;
     const newText = prompt("Edit your message:", oldText);
