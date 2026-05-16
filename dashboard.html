@@ -10,23 +10,31 @@
     <div class="app-container">
         <!-- Sidebar (Left side) -->
         <aside class="sidebar">
-            <header class="sidebar-header">
-                <div class="user-profile">
-                    <span id="current-user-name">Loading...</span>
+            <header class="sidebar-header" style="height: auto; padding: 15px 16px; flex-direction: column; align-items: stretch; gap: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div class="user-profile" style="display: flex; flex-direction: column; gap: 2px;">
+                        <span id="current-user-name" style="font-weight: bold;">Loading...</span>
+                        <!-- Status Message Display -->
+                        <span id="current-user-status-msg" style="font-size: 12px; color: #667781; font-style: italic;">Hey there! I am using Mwamini Chat.</span>
+                    </div>
+                    <div class="header-actions">
+                        <button id="create-group-btn" title="Create Group">➕ Group</button>
+                        <button id="logout-btn">Logout</button>
+                    </div>
                 </div>
-                <div class="header-actions">
-                    <button id="create-group-btn" title="Create Group">➕ Group</button>
-                    <button id="logout-btn">Logout</button>
-                </div>
+                <!-- Edit Status Trigger Button -->
+                <button id="update-status-btn" style="background: transparent; color: #008069; border: 1px solid #008069; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; align-self: flex-start;">✏️ Update Status Note</button>
             </header>
 
-            <div class="search-bar">
-                <input type="text" placeholder="Search or start new chat">
+            <!-- Find Friends Input Fields -->
+            <div class="search-bar" style="display: flex; gap: 5px; align-items: center; padding: 10px;">
+                <input type="text" id="search-email-input" placeholder="Find friend by exact email..." style="flex: 1;">
+                <button id="add-user-btn" style="background: #008069; color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer;">Add</button>
             </div>
 
             <!-- Users and Groups Lists -->
             <div class="chats-list" id="chats-sidebar-list">
-                <!-- Dynamically populated via JS -->
+                <!-- Populated dynamically via app.js -->
             </div>
         </aside>
 
@@ -35,7 +43,7 @@
             <!-- Default placeholder screen -->
             <div id="no-chat-selected" class="no-chat">
                 <h2>Welcome to Mwamini Chat Web</h2>
-                <p>Select a user or a group from the left to start encrypted, secure messaging.</p>
+                <p>Select a user or a group from the left, or search an email above to start messaging.</p>
             </div>
 
             <!-- Active Chat screen -->
@@ -43,12 +51,12 @@
                 <header class="chat-header">
                     <div class="active-user-info">
                         <h3 id="active-chat-title">Chat Target</h3>
-                        <span id="active-chat-status"></span>
+                        <span id="active-chat-status" style="font-size: 12px; color: #667781; display: block; margin-top: 2px;"></span>
                     </div>
                 </header>
 
                 <div class="messages-container" id="messages-box">
-                    <!-- Messages appear here -->
+                    <!-- Chat messages appear here -->
                 </div>
 
                 <footer class="chat-footer">
