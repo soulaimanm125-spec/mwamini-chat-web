@@ -12,13 +12,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // STEP FOR USER: Replace these placeholder values with your specific Firebase 
     // Web App configuration block obtained inside your Firebase Console setting panel.
 const firebaseConfig = {
-  apiKey: "AIzaSyBAvEGxHrS6b5dOgc9TpWPSMR-K2i6lIxA",
-  authDomain: "mwamini-chat-web-e0d8c.firebaseapp.com",
-  projectId: "mwamini-chat-web-e0d8c",
-  storageBucket: "mwamini-chat-web-e0d8c.firebasestorage.app",
-  messagingSenderId: "780880757548",
-  appId: "1:780880757548:web:ac60921ed3ef873003a289",
-  measurementId: "G-QZ2S2TJB8X"
+  apiKey: "AIzaSyD0O4t5dUeuzvZ19WCwHvy3aezwsBw4DOw",
+  authDomain: "mwamini-chat.firebaseapp.com",
+  projectId: "mwamini-chat",
+  storageBucket: "mwamini-chat.firebasestorage.app",
+  messagingSenderId: "653279393702",
+  appId: "1:653279393702:web:e15237b70db62514794167",
+  measurementId: "G-ZFWRJ501VJ"
 };
     // Safe Initialization check wrapper
     if (typeof firebase !== 'undefined') {
