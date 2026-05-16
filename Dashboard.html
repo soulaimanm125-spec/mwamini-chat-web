@@ -8,13 +8,13 @@
 </head>
 <body>
     <div class="app-layout">
-        <aside class="sidebar glass-effect">
+        <aside class="sidebar">
             <div class="sidebar-header">
                 <div class="user-profile">
-                    <div class="avatar border-gold">U</div>
-                    <span class="username">Guest User</span>
+                    <div class="avatar border-gold" id="userAvatar">U</div>
+                    <span class="username" id="displayUsername">Loading...</span>
                 </div>
-                <button class="logout-btn" id="logoutBtn">✕</button>
+                <button class="logout-btn" id="logoutBtn" title="Sign Out">✕</button>
             </div>
 
             <div class="status-tray-container">
@@ -24,54 +24,31 @@
                         <div class="status-circle plus-icon">+</div>
                         <span>My Status</span>
                     </div>
-                    <div class="status-item active-status">
-                        <div class="status-circle ring-gold">T1</div>
-                        <span>Team Alpha</span>
-                    </div>
-                    <div class="status-item active-status">
-                        <div class="status-circle ring-gold">DEV</div>
-                        <span>Dev Channel</span>
-                    </div>
                 </div>
             </div>
 
             <div class="search-bar">
                 <span class="search-icon">🔍</span>
-                <input type="text" placeholder="Search chats or users...">
+                <input type="text" placeholder="Search team members...">
             </div>
 
             <div class="chat-list" id="chatList">
-                <div class="chat-item active">
-                    <div class="avatar">C1</div>
-                    <div class="chat-info">
-                        <div class="chat-name-row">
-                            <h4>General Discussion</h4>
-                            <span class="time">12:34</span>
-                        </div>
-                        <p class="preview-text">Welcome to the workspace chat view...</p>
-                    </div>
                 </div>
-            </div>
         </aside>
 
-        <main class="chat-area" id="chatArea">
-            <div class="chat-header glass-effect">
+        <main class="chat-area">
+            <div class="chat-header">
                 <div class="active-chat-info">
-                    <div class="avatar gold-bg">C1</div>
+                    <div class="avatar gold-bg">G</div>
                     <div>
-                        <h3>General Discussion</h3>
-                        <p class="status-indicator"><span class="pulse-dot"></span> Cloud hosted environment</p>
+                        <h3>Global Workspace Chat</h3>
+                        <p class="status-indicator"><span class="pulse-dot"></span> Secure Cloud Environment</p>
                     </div>
                 </div>
             </div>
 
             <div class="messages-window" id="messagesWindow">
-                <div class="message received">
-                    <span class="sender">Workspace Bot</span>
-                    <p>Welcome to the Mwamini Chat interface template.</p>
-                    <span class="msg-time">12:30</span>
                 </div>
-            </div>
 
             <div class="preview-drawer" id="previewDrawer" style="display: none;">
                 <div class="preview-content">
@@ -80,7 +57,7 @@
                 </div>
             </div>
 
-            <form class="input-area glass-effect" id="chatInputForm">
+            <form class="input-area" id="chatInputForm">
                 <label class="attachment-btn" for="fileAttachment">
                     📎
                     <input type="file" id="fileAttachment" style="display: none;">
@@ -93,16 +70,20 @@
     </div>
 
     <div class="modal" id="statusModal" style="display: none;">
-        <div class="modal-content glass-effect">
-            <h3>Update Status</h3>
-            <p>Share what you are currently working on with your team.</p>
-            <input type="text" id="statusTextInput" placeholder="What's on your mind?..." maxlength="60">
+        <div class="modal-content">
+            <h3>Update Workspace Status</h3>
+            <p>Share what you are working on with other team users.</p>
+            <input type="text" id="statusTextInput" placeholder="What's your current status?..." maxlength="60">
             <div class="modal-actions">
                 <button type="button" class="btn-cancel" id="closeStatusModal">Cancel</button>
                 <button type="button" class="btn-primary-small" id="submitStatusBtn">Update</button>
             </div>
         </div>
     </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <script src="app.js"></script>
 </body>
