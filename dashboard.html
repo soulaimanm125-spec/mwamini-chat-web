@@ -3,79 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mwamini Chat Web - Dashboard</title>
+    <title>MWAMINI CHAT WEB - Workspace</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Sidebar (Left side) -->
-        <aside class="sidebar">
-            <header class="sidebar-header" style="height: auto; padding: 15px 16px; flex-direction: column; align-items: stretch; gap: 10px;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div class="user-profile" style="display: flex; flex-direction: column; gap: 2px;">
-                        <span id="current-user-name" style="font-weight: bold;">Loading...</span>
-                        <!-- Status Message Display -->
-                        <span id="current-user-status-msg" style="font-size: 12px; color: #667781; font-style: italic;">Hey there! I am using Mwamini Chat.</span>
-                    </div>
-                    <div class="header-actions">
-                        <button id="create-group-btn" title="Create Group">➕ Group</button>
-                        <button id="logout-btn">Logout</button>
-                    </div>
+    <div class="app-layout">
+        <aside class="sidebar glass-effect">
+            <div class="sidebar-header">
+                <div class="user-profile">
+                    <div class="avatar border-gold">M</div>
+                    <span class="username">Operator Main</span>
                 </div>
-                <!-- Edit Status Trigger Button -->
-                <button id="update-status-btn" style="background: transparent; color: #008069; border: 1px solid #008069; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; align-self: flex-start;">✏️ Update Status Note</button>
-            </header>
-
-            <!-- Find Friends Input Fields -->
-            <div class="search-bar" style="display: flex; gap: 5px; align-items: center; padding: 10px;">
-                <input type="text" id="search-email-input" placeholder="Find friend by exact email..." style="flex: 1;">
-                <button id="add-user-btn" style="background: #008069; color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer;">Add</button>
+                <button class="logout-btn" onclick="window.location.href='index.html'">✕</button>
             </div>
 
-            <!-- Users and Groups Lists -->
-            <div class="chats-list" id="chats-sidebar-list">
-                <!-- Populated dynamically via app.js -->
+            <div class="search-bar">
+                <span class="search-icon">🔍</span>
+                <input type="text" placeholder="Search user or exact email...">
+            </div>
+
+            <div class="chat-list" id="chatList">
+                <div class="chat-item active">
+                    <div class="avatar">C1</div>
+                    <div class="chat-info">
+                        <div class="chat-name-row">
+                            <h4>Secure Connection Alpha</h4>
+                            <span class="time">20:16</span>
+                        </div>
+                        <p class="preview-text">Encrypted synchronization pipeline ready.</p>
+                    </div>
+                </div>
+                <div class="chat-item">
+                    <div class="avatar">G1</div>
+                    <div class="chat-info">
+                        <div class="chat-name-row">
+                            <h4>Mwamini Engine Group</h4>
+                            <span class="time">14:02</span>
+                        </div>
+                        <p class="preview-text">System update deployment scheduled...</p>
+                    </div>
+                </div>
             </div>
         </aside>
 
-        <!-- Chat Window (Right side) -->
-        <main class="chat-window">
-            <!-- Default placeholder screen -->
-            <div id="no-chat-selected" class="no-chat">
-                <h2>Welcome to Mwamini Chat Web</h2>
-                <p>Select a user or a group from the left, or search an email above to start messaging.</p>
-            </div>
-
-            <!-- Active Chat screen -->
-            <div id="active-chat-container" style="display: none;">
-                <header class="chat-header">
-                    <div class="active-user-info">
-                        <h3 id="active-chat-title">Chat Target</h3>
-                        <span id="active-chat-status" style="font-size: 12px; color: #667781; display: block; margin-top: 2px;"></span>
+        <main class="chat-area" id="chatArea">
+            <div class="chat-header glass-effect">
+                <div class="active-chat-info">
+                    <div class="avatar gold-bg">C1</div>
+                    <div>
+                        <h3>Secure Connection Alpha</h3>
+                        <p class="status-indicator"><span class="pulse-dot"></span> End-to-end cloud storage</p>
                     </div>
-                </header>
-
-                <div class="messages-container" id="messages-box">
-                    <!-- Chat messages appear here -->
                 </div>
-
-                <footer class="chat-footer">
-                    <!-- File upload for photos/videos -->
-                    <label for="media-input" class="attach-btn" title="Send Photo/Video">📎</label>
-                    <input type="file" id="media-input" accept="image/*,video/*" style="display:none;">
-                    
-                    <input type="text" id="message-input" placeholder="Type a message">
-                    <button id="send-btn">Send</button>
-                </footer>
             </div>
+
+            <div class="messages-window" id="messagesWindow">
+                <div class="message received">
+                    <span class="sender">System Admin</span>
+                    <p>Welcome to MWAMINI CHAT WEB interface node.</p>
+                    <span class="msg-time">20:15</span>
+                </div>
+                <div class="message sent">
+                    <p>System operational checks returning 100% efficiency. Ready for secure transactions.</p>
+                    <span class="msg-time">20:16</span>
+                </div>
+            </div>
+
+            <form class="input-area glass-effect" id="chatInputForm">
+                <button type="button" class="attachment-btn">📎</button>
+                <input type="text" id="messageInput" placeholder="Write your encrypted message..." autocomplete="off">
+                <button type="submit" class="send-btn">➔</button>
+            </form>
         </main>
     </div>
-
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
