@@ -14,7 +14,25 @@
                     <div class="avatar border-gold">M</div>
                     <span class="username">Operator Main</span>
                 </div>
-                <button class="logout-btn" onclick="window.location.href='index.html'">✕</button>
+                <button class="logout-btn" id="logoutBtn">✕</button>
+            </div>
+
+            <div class="status-tray-container">
+                <p class="section-title">Status Updates</p>
+                <div class="status-tray">
+                    <div class="status-item create-status" id="addStatusBtn">
+                        <div class="status-circle plus-icon">+</div>
+                        <span>My Status</span>
+                    </div>
+                    <div class="status-item active-status">
+                        <div class="status-circle ring-gold">A1</div>
+                        <span>Alpha 1</span>
+                    </div>
+                    <div class="status-item active-status">
+                        <div class="status-circle ring-gold">ENG</div>
+                        <span>Engine</span>
+                    </div>
+                </div>
             </div>
 
             <div class="search-bar">
@@ -31,16 +49,6 @@
                             <span class="time">20:16</span>
                         </div>
                         <p class="preview-text">Encrypted synchronization pipeline ready.</p>
-                    </div>
-                </div>
-                <div class="chat-item">
-                    <div class="avatar">G1</div>
-                    <div class="chat-info">
-                        <div class="chat-name-row">
-                            <h4>Mwamini Engine Group</h4>
-                            <span class="time">14:02</span>
-                        </div>
-                        <p class="preview-text">System update deployment scheduled...</p>
                     </div>
                 </div>
             </div>
@@ -63,19 +71,39 @@
                     <p>Welcome to MWAMINI CHAT WEB interface node.</p>
                     <span class="msg-time">20:15</span>
                 </div>
-                <div class="message sent">
-                    <p>System operational checks returning 100% efficiency. Ready for secure transactions.</p>
-                    <span class="msg-time">20:16</span>
+            </div>
+
+            <div class="preview-drawer" id="previewDrawer" style="display: none;">
+                <div class="preview-content">
+                    <span id="previewFileName">filename.jpg</span>
+                    <button type="button" id="cancelPreviewBtn">✕</button>
                 </div>
             </div>
 
             <form class="input-area glass-effect" id="chatInputForm">
-                <button type="button" class="attachment-btn">📎</button>
+                <label class="attachment-btn" for="fileAttachment">
+                    📎
+                    <input type="file" id="fileAttachment" style="display: none;">
+                </label>
+                
                 <input type="text" id="messageInput" placeholder="Write your encrypted message..." autocomplete="off">
                 <button type="submit" class="send-btn">➔</button>
             </form>
         </main>
     </div>
+
+    <div class="modal" id="statusModal" style="display: none;">
+        <div class="modal-content glass-effect">
+            <h3>Publish Status Update</h3>
+            <p>Share a quick update or thought with the operational network.</p>
+            <input type="text" id="statusTextInput" placeholder="What's happening, Operator?..." maxlength="60">
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" id="closeStatusModal">Cancel</button>
+                <button type="button" class="btn-primary-small" id="submitStatusBtn">Publish</button>
+            </div>
+        </div>
+    </div>
+
     <script src="app.js"></script>
 </body>
 </html>
