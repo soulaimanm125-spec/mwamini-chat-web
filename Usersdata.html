@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwamini Chat - Secure Portal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-page">
+    <div class="glass-container auth-card">
+        <div class="auth-header">
+            <div class="logo-badge">M</div>
+            <h1 id="authTitle">Sign In</h1>
+            <p class="subtitle" id="authSubtitle">SECURE WORKSPACE PORTAL</p>
+        </div>
+        
+        <form id="loginForm" class="auth-form">
+            <div id="authErrorMessage" class="error-msg" style="display: none;"></div>
+            
+            <div class="input-group" id="usernameFieldGroup" style="display: none;">
+                <span class="icon">👤</span>
+                <input type="text" id="registerUsername" placeholder="Your Full Name">
+            </div>
+
+            <div class="input-group">
+                <span class="icon">✉</span>
+                <input type="email" id="loginEmail" placeholder="Email Address" required>
+            </div>
+            <div class="input-group">
+                <span class="icon">🔒</span>
+                <input type="password" id="loginPassword" placeholder="Password (Min 6 characters)" required>
+            </div>
+            
+            <button type="submit" class="btn-primary" id="loginBtn">Continue to Workspace</button>
+        </form>
+
+        <div class="divider"><span>OR</span></div>
+
+        <button class="btn-secondary" id="googleAuthBtn">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google logo" class="google-icon">
+            Continue with Google
+        </button>
+
+        <p class="auth-footer" id="authModeSwitchFooter">
+            New to the platform? <a href="#" id="toggleAuthModeBtn">Create an account</a>
+        </p>
+    </div>
+
+    <footer style="position: absolute; bottom: 15px; text-align: center; font-size: 11px; color: rgba(255,255,255,0.2); width: 100%; pointer-events: none;">
+        Secure portfolio workspace. Real-time data processing handled via encrypted Firebase SDK endpoints.
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
+    <script src="app.js"></script>
+</body>
+</html>
