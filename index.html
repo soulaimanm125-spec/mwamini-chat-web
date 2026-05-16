@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwamini Chat Web - Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="welcome-page">
+    <div class="auth-container">
+        <h2>MWAMINI CHAT WEB</h2>
+        <p id="auth-title">Sign In to continue to WhatsApp-style chatting</p>
+        
+        <form id="auth-form">
+            <div class="input-group" id="username-group" style="display: none;">
+                <input type="text" id="auth-username" placeholder="Full Name">
+            </div>
+            <div class="input-group">
+                <input type="email" id="auth-email" placeholder="Email Address" required>
+            </div>
+            <div class="input-group">
+                <input type="password" id="auth-password" placeholder="Password" required>
+            </div>
+            <button type="submit" id="auth-btn">Log In</button>
+        </form>
+
+        <p class="toggle-text">
+            <span id="toggle-link">Don't have an account? Register here</span>
+        </p>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
