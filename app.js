@@ -1,11 +1,12 @@
+// ====== FIREBASE CONFIGURATION ======
+// Replace placeholders with your actual Web App Config keys from your Firebase Console:
 const firebaseConfig = {
-  apiKey: "AIzaSyBAvEGxHrS6b5dOgc9TpWPSMR-K2i6lIxA",
-  authDomain: "mwamini-chat-web-e0d8c.firebaseapp.com",
-  projectId: "mwamini-chat-web-e0d8c",
-  storageBucket: "mwamini-chat-web-e0d8c.firebasestorage.app",
-  messagingSenderId: "780880757548",
-  appId: "1:780880757548:web:ac60921ed3ef873003a289",
-  measurementId: "G-QZ2S2TJB8X"
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
 };
 
 // Safely initialize Firebase instances
@@ -75,15 +76,18 @@ if (authForm) {
 }
 
 // ====== ROUTING ROUTINES BASED ON PROFILE STATE ======
+// This listener runs in real-time across open tabs/windows
 auth.onAuthStateChanged(user => {
     if (user) {
         currentUserId = user.uid;
+        // If logged in but lingering on index.html, auto-route forward instantly
         if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
             window.location.href = 'dashboard.html';
         } else if (window.location.pathname.includes('dashboard.html')) {
             initDashboard();
         }
     } else {
+        // If logged out anywhere, boot immediately back to authentication page
         if (window.location.pathname.includes('dashboard.html')) {
             window.location.href = 'index.html';
         }
@@ -120,7 +124,7 @@ function initDashboard() {
         });
     });
 
-    // Explicit lookup to manually initialize a direct single chat
+    // FIND FRIENDS: Explicit email lookup layout
     const addUserBtn = document.getElementById('add-user-btn');
     if (addUserBtn) {
         addUserBtn.addEventListener('click', () => {
@@ -281,6 +285,7 @@ function listenForMessages(chatId) {
                 
                 let contentHTML = `<div><strong>${mData.senderName}</strong>: <span id="text-${doc.id}">${mData.message}</span></div>`;
                 
+                // FILE DISPLAY RULES:
                 if (mData.mediaUrl) {
                     if (mData.mediaType.startsWith('image/')) {
                         contentHTML += `<img src="${mData.mediaUrl}" class="msg-media" />`;
@@ -312,7 +317,7 @@ function listenForMessages(chatId) {
         });
 }
 
-// ====== OUTPUT DISPATCH CONTROL ======
+// ====== OUTPUT DISPATCH AND FILE UPLOAD HANDLING ======
 function setupMessageSender() {
     const sendBtn = document.getElementById('send-btn');
     const msgInput = document.getElementById('message-input');
@@ -327,6 +332,7 @@ function setupMessageSender() {
         db.collection('users').doc(currentUserId).get().then(userDoc => {
             const senderName = userDoc.data().name;
 
+            // Handle file storage if data structure is selected
             if (file && storage) {
                 const fileRef = storage.ref().child(`chats/${currentChatId}/${Date.now()}_${file.name}`);
                 fileRef.put(file).then(snapshot => snapshot.ref.getDownloadURL()).then(downloadUrl => {
