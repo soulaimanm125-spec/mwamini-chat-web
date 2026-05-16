@@ -1,10 +1,15 @@
+/**
+ * MWAMINI CHAT SYSTEM - ARCHITECTURE CONTROLLER
+ * Full Real-Time Sync Engines for Accounts, Statuses, Messages & Files.
+ */
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // =========================================================================
     // 1. SECURE DATABASE CREDENTIAL CONFIGURATION
     // =========================================================================
-    // REPLACE THESE PLACEHOLDERS with your actual keys from your Firebase Console!
-   const firebaseConfig = {
+    // IMPORTANT: Swap out these values with your actual project keys from your Firebase Console!
+const firebaseConfig = {
   apiKey: "AIzaSyD0O4t5dUeuzvZ19WCwHvy3aezwsBw4DOw",
   authDomain: "mwamini-chat.firebaseapp.com",
   projectId: "mwamini-chat",
@@ -14,21 +19,19 @@ document.addEventListener('DOMContentLoaded', () => {
   measurementId: "G-ZFWRJ501VJ"
 };
 
-    // Check if the script tags in HTML loaded successfully
     if (typeof firebase !== 'undefined') {
         firebase.initializeApp(firebaseConfig);
     } else {
-        console.error("Firebase SDK script headers missing from your HTML file.");
+        console.error("Firebase Core Engine Scripts failing to execute properly.");
     }
 
     const auth = (typeof firebase !== 'undefined') ? firebase.auth() : null;
     const db = (typeof firebase !== 'undefined') ? firebase.firestore() : null;
 
-    // Form DOM Elements
+    // Interface DOM Selection Links
     const loginForm = document.getElementById('loginForm');
     const googleAuthBtn = document.getElementById('googleAuthBtn');
     const authErrorMessage = document.getElementById('authErrorMessage');
-    const toggleAuthModeBtn = document.getElementById('toggleAuthModeBtn');
     
     const authTitle = document.getElementById('authTitle');
     const authSubtitle = document.getElementById('authSubtitle');
@@ -36,101 +39,89 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginBtn = document.getElementById('loginBtn');
     const authModeSwitchFooter = document.getElementById('authModeSwitchFooter');
 
-    let isRegistrationMode = false; // False = Login Mode, True = Register Mode
+    let isRegistrationMode = false; // False = Sign In Mode, True = Account Registration Mode
 
     // =========================================================================
-    // 2. TOGGLE LOGIC: SWITCH BETWEEN LOGIN & REGISTER
+    // 2. LOG-IN / REGISTRATION PANEL TOGGLE ROUTINE
     // =========================================================================
-    if (loginForm) {
-        // Intercept click actions to swap form fields cleanly
-        document.body.addEventListener('click', (e) => {
-            if (e.target && e.target.id === 'toggleAuthModeBtn') {
-                e.preventDefault();
-                isRegistrationMode = !isRegistrationMode;
-                clearErrorDisplay();
+    document.body.addEventListener('click', (e) => {
+        if (e.target && e.target.id === 'toggleAuthModeBtn') {
+            e.preventDefault();
+            isRegistrationMode = !isRegistrationMode;
+            if (authErrorMessage) authErrorMessage.style.display = "none";
 
-                if (isRegistrationMode) {
-                    authTitle.textContent = "Create Account";
-                    authSubtitle.textContent = "REGISTER NEW OPERATOR PROFILE";
-                    usernameFieldGroup.style.display = "block";
-                    document.getElementById('registerUsername').required = true;
-                    loginBtn.textContent = "Register Account";
-                    authModeSwitchFooter.innerHTML = `Already have an account? <a href="#" id="toggleAuthModeBtn">Sign In here</a>`;
-                } else {
-                    authTitle.textContent = "Sign In";
-                    authSubtitle.textContent = "SECURE WORKSPACE PORTAL";
-                    usernameFieldGroup.style.display = "none";
-                    document.getElementById('registerUsername').required = false;
-                    loginBtn.textContent = "Continue to Workspace";
-                    authModeSwitchFooter.innerHTML = `New to the platform? <a href="#" id="toggleAuthModeBtn">Create an account</a>`;
-                }
+            if (isRegistrationMode) {
+                authTitle.textContent = "Create Account";
+                authSubtitle.textContent = "REGISTER NEW OPERATOR PROFILE";
+                usernameFieldGroup.style.display = "block";
+                document.getElementById('registerUsername').required = true;
+                loginBtn.textContent = "Register Account";
+                authModeSwitchFooter.innerHTML = `Already have an account? <a href="#" id="toggleAuthModeBtn">Sign In here</a>`;
+            } else {
+                authTitle.textContent = "Sign In";
+                authSubtitle.textContent = "SECURE WORKSPACE PORTAL";
+                usernameFieldGroup.style.display = "none";
+                document.getElementById('registerUsername').required = false;
+                loginBtn.textContent = "Continue to Workspace";
+                authModeSwitchFooter.innerHTML = `New to the platform? <a href="#" id="toggleAuthModeBtn">Create an account</a>`;
             }
-        });
-    }
+        }
+    });
 
     // =========================================================================
-    // 3. SECURE AUTHENTICATION OPERATIONS (REGISTER & LOGIN)
+    // 3. SECURE AUTHENTICATION PIPELINE ENGINE
     // =========================================================================
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            clearErrorDisplay();
+            if (authErrorMessage) authErrorMessage.style.display = "none";
 
             const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value.trim();
 
             if (!auth || !db) {
-                displayAuthError("Database connection configuration offline. Enter credentials after adding real Firebase keys.");
+                displayAuthError("Database link offline. Insert production configuration keys into your script file.");
                 return;
             }
 
             if (password.length < 6) {
-                displayAuthError("Security enforcement: Password must be at least 6 characters long.");
+                displayAuthError("Password security restriction: Minimum string length must be 6 characters.");
                 return;
             }
 
             loginBtn.disabled = true;
 
             if (isRegistrationMode) {
-                // RUN REGISTRATION
-                const username = document.getElementById('registerUsername').value.trim();
-                loginBtn.textContent = "Creating Safe Account Profile...";
+                const usernameValue = document.getElementById('registerUsername').value.trim();
+                loginBtn.textContent = "Creating Safe Account...";
 
                 auth.createUserWithEmailAndPassword(email, password)
                     .then((userCredential) => {
-                        // Write user details to database so other members can find them in the sidebar
                         return db.collection("users").doc(userCredential.user.uid).set({
                             uid: userCredential.user.uid,
                             email: email,
-                            username: username || email.split('@')[0],
-                            statusText: "Active and connected",
+                            username: usernameValue || email.split('@')[0],
+                            statusText: "Active and online",
                             timestamp: firebase.firestore.FieldValue.serverTimestamp()
                         });
                     })
-                    .then(() => {
-                        window.location.href = 'dashboard.html';
-                    })
+                    .then(() => { window.location.href = 'dashboard.html'; })
                     .catch((err) => {
-                        resetSubmitButton(isRegistrationMode ? "Register Account" : "Continue to Workspace");
+                        resetSubmitBtnState(isRegistrationMode ? "Register Account" : "Continue to Workspace");
                         displayAuthError(err.message);
                     });
             } else {
-                // RUN SECURE LOGIN VERIFICATION
-                loginBtn.textContent = "Verifying Credentials...";
-
+                loginBtn.textContent = "Checking Credentials...";
                 auth.signInWithEmailAndPassword(email, password)
-                    .then(() => {
-                        window.location.href = 'dashboard.html';
-                    })
+                    .then(() => { window.location.href = 'dashboard.html'; })
                     .catch((err) => {
-                        resetSubmitButton(isRegistrationMode ? "Register Account" : "Continue to Workspace");
+                        resetSubmitBtnState(isRegistrationMode ? "Register Account" : "Continue to Workspace");
                         displayAuthError("Access Denied: " + err.message);
                     });
             }
         });
     }
 
-    // Google Sign-In Identity Management
     if (googleAuthBtn && auth && db) {
         googleAuthBtn.addEventListener('click', () => {
             const provider = new firebase.auth.GoogleAuthProvider();
@@ -140,19 +131,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     return db.collection("users").doc(user.uid).set({
                         uid: user.uid,
                         email: user.email,
-                        username: user.displayName || "Google User",
-                        statusText: "Connected through Google Authenticator",
+                        username: user.displayName || "Google Operator",
+                        statusText: "Connected via Google Auth",
                         timestamp: firebase.firestore.FieldValue.serverTimestamp()
                     }, { merge: true });
                 })
-                .then(() => {
-                    window.location.href = 'dashboard.html';
-                })
+                .then(() => { window.location.href = 'dashboard.html'; })
                 .catch((err) => displayAuthError(err.message));
         });
     }
 
-    // Log Out Endpoint Action
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn && auth) {
         logoutBtn.addEventListener('click', () => {
@@ -161,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================================
-    // 4. REAL-TIME CHAT & FILE SYSTEM (dashboard.html)
+    // 4. CHAT MESSAGING & FILE BROADCAST SYSTEM
     // =========================================================================
     const chatInputForm = document.getElementById('chatInputForm');
     const messageInput = document.getElementById('messageInput');
@@ -171,80 +159,75 @@ document.addEventListener('DOMContentLoaded', () => {
     const previewFileName = document.getElementById('previewFileName');
     const cancelPreviewBtn = document.getElementById('cancelPreviewBtn');
 
-    let activeStagedFile = null;
+    let activeFilePayload = null;
 
-    const scrollToBottom = () => { if (messagesWindow) messagesWindow.scrollTop = messagesWindow.scrollHeight; };
+    const scrollChatToBottom = () => { if (messagesWindow) messagesWindow.scrollTop = messagesWindow.scrollHeight; };
 
-    // Capture file meta details to push across message streams
     if (fileAttachment) {
         fileAttachment.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (!file) return;
 
-            activeStagedFile = {
+            activeFilePayload = {
                 name: file.name,
                 size: (file.size / 1024).toFixed(1) + " KB",
                 type: file.type
             };
 
             if (previewFileName && previewDrawer) {
-                previewFileName.textContent = `📎 Ready to upload: ${activeStagedFile.name} (${activeStagedFile.size})`;
+                previewFileName.textContent = `📎 Staged File: ${activeFilePayload.name} (${activeFilePayload.size})`;
                 previewDrawer.style.display = 'flex';
             }
         });
     }
 
     if (cancelPreviewBtn) {
-        cancelPreviewBtn.addEventListener('click', () => clearStagedFile());
+        cancelPreviewBtn.addEventListener('click', () => clearStagedFileBox());
     }
 
-    function clearStagedFile() {
-        activeStagedFile = null;
+    function clearStagedFileBox() {
+        activeFilePayload = null;
         if (fileAttachment) fileAttachment.value = '';
         if (previewDrawer) previewDrawer.style.display = 'none';
     }
 
-    // Sending Messaging Payloads
     if (chatInputForm) {
         chatInputForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const textContent = messageInput.value.trim();
-            if (!textContent && !activeStagedFile) return;
+            const text = messageInput.value.trim();
+            if (!text && !activeFilePayload) return;
 
             if (!db || !auth || !auth.currentUser) {
-                // If developer config keys are empty, run temporary visual feedback backup
-                const localTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                appendMessageBubble(textContent, activeStagedFile, localTime, 'sent', 'Me');
+                const currentLocalTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                injectMessageBubbleHTML(text, activeFilePayload, currentLocalTime, 'sent', 'Me');
                 messageInput.value = '';
-                clearStagedFile();
+                clearStagedFileBox();
                 return;
             }
 
-            // Write and broadcast globally to Firestore Database
-            const user = auth.currentUser;
+            const senderUserInstance = auth.currentUser;
             db.collection("messages").add({
-                text: textContent,
-                senderUid: user.uid,
-                senderName: user.displayName || user.email.split('@')[0],
-                filePayload: activeStagedFile ? activeStagedFile : null,
+                text: text,
+                senderUid: senderUserInstance.uid,
+                senderName: senderUserInstance.displayName || senderUserInstance.email.split('@')[0],
+                filePayload: activeFilePayload ? activeFilePayload : null,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             }).then(() => {
                 messageInput.value = '';
-                clearStagedFile();
-            }).catch(err => console.error("Database Write Error:", err));
+                clearStagedFileBox();
+            }).catch(err => console.error("Cloud Thread Storage Error: ", err));
         });
     }
 
-    // Dynamic Engine UI Generation for Message Bubbles
-    function appendMessageBubble(text, fileData, time, direction, name) {
+    function injectMessageBubbleHTML(text, fileData, time, orientation, authorName) {
         if (!messagesWindow) return;
-        const bubble = document.createElement('div');
-        bubble.className = `message ${direction}`;
+        const bubbleWrap = document.createElement('div');
+        bubbleWrap.className = `message ${orientation}`;
         
-        let contents = (direction === 'received') ? `<span class="sender">${escapeHTML(name)}</span>` : '';
+        let visualHTML = (orientation === 'received') ? `<span class="sender">${escapeHTML(authorName)}</span>` : '';
         
         if (fileData) {
-            contents += `
+            visualHTML += `
                 <div class="file-attachment-bubble">
                     <span class="file-icon">📁</span>
                     <div>
@@ -253,28 +236,40 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>`;
         }
-        if (text) contents += `<p style="margin-top: ${fileData ? '6px' : '0px'}">${escapeHTML(text)}</p>`;
-        contents += `<span class="msg-time">${time}</span>`;
+        if (text) visualHTML += `<p style="margin-top: ${fileData ? '6px' : '0px'}">${escapeHTML(text)}</p>`;
+        visualHTML += `<span class="msg-time">${time}</span>`;
         
-        bubble.innerHTML = contents;
-        messagesWindow.appendChild(bubble);
-        scrollToBottom();
+        bubbleWrap.innerHTML = visualHTML;
+        messagesWindow.appendChild(bubbleWrap);
+        scrollChatToBottom();
     }
 
-    // Listen live to Incoming Cloud Data Changes
     if (db && auth && messagesWindow) {
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                db.collection("messages").orderBy("timestamp", "asc").onSnapshot((snapshot) => {
-                    messagesWindow.innerHTML = ''; // Fresh clean render update path
-                    snapshot.forEach((doc) => {
-                        const msg = doc.data();
-                        const directionState = (msg.senderUid === user.uid) ? 'sent' : 'received';
-                        let timeStr = "Syncing...";
-                        if (msg.timestamp) {
-                            timeStr = msg.timestamp.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        auth.onAuthStateChanged((userInstance) => {
+            if (userInstance) {
+                // Read out User Profile Info to populate the header
+                db.collection("users").doc(userInstance.uid).get().then((docSnapshot) => {
+                    if (docSnapshot.exists) {
+                        const currentProfile = docSnapshot.data();
+                        const displayUsername = document.getElementById('displayUsername');
+                        const userAvatar = document.getElementById('userAvatar');
+                        
+                        if (displayUsername) displayUsername.textContent = currentProfile.username;
+                        if (userAvatar) userAvatar.textContent = currentProfile.username.substring(0,2);
+                    }
+                });
+
+                // Read live streaming chat threads
+                db.collection("messages").orderBy("timestamp", "asc").onSnapshot((querySnapshot) => {
+                    messagesWindow.innerHTML = '';
+                    querySnapshot.forEach((doc) => {
+                        const currentMsg = doc.data();
+                        const trackingDirection = (currentMsg.senderUid === userInstance.uid) ? 'sent' : 'received';
+                        let bubbleTime = "Syncing...";
+                        if (currentMsg.timestamp) {
+                            bubbleTime = currentMsg.timestamp.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                         }
-                        appendMessageBubble(msg.text, msg.filePayload, timeStr, directionState, msg.senderName);
+                        injectMessageBubbleHTML(currentMsg.text, currentMsg.filePayload, bubbleTime, trackingDirection, currentMsg.senderName);
                     });
                 });
             }
@@ -282,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================================
-    // 5. STATUS PIPELINE & USER ROSTER SYNCHRONIZATION
+    // 5. STATUS PIPELINE & MEMBER ROSTER SYNCHRONIZATION
     // =========================================================================
     const addStatusBtn = document.getElementById('addStatusBtn');
     const statusModal = document.getElementById('statusModal');
@@ -292,14 +287,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const statusTray = document.querySelector('.status-tray');
     const chatList = document.getElementById('chatList');
 
+    if (addStatusBtn) addStatusBtn.addEventListener('click', () => statusModal.style.display = 'flex');
+    if (closeStatusModal) closeStatusModal.addEventListener('click', () => {
+        statusModal.style.display = 'none';
+        statusTextInput.value = '';
+    });
+
     if (submitStatusBtn) {
         submitStatusBtn.addEventListener('click', () => {
-            const statusString = statusTextInput.value.trim();
-            if (!statusString) return;
+            const textValue = statusTextInput.value.trim();
+            if (!textValue) return;
 
             if (db && auth && auth.currentUser) {
                 db.collection("users").doc(auth.currentUser.uid).update({
-                    statusText: statusString,
+                    statusText: textValue,
                     statusTimestamp: firebase.firestore.FieldValue.serverTimestamp()
                 }).then(() => {
                     statusModal.style.display = 'none';
@@ -309,41 +310,40 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Live sync side bar user data listings and top active status tray lists
     if (db && auth && statusTray) {
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                db.collection("users").onSnapshot((snapshot) => {
+        auth.onAuthStateChanged((userInstance) => {
+            if (userInstance) {
+                db.collection("users").onSnapshot((querySnapshot) => {
                     statusTray.innerHTML = `<div class="status-item create-status" id="addStatusBtn"><div class="status-circle plus-icon">+</div><span>My Status</span></div>`;
+                    document.getElementById('addStatusBtn').addEventListener('click', () => statusModal.style.display = 'flex');
+                    
                     if (chatList) chatList.innerHTML = '';
 
-                    snapshot.forEach((doc) => {
-                        const profile = doc.data();
-                        const initials = profile.username ? profile.username.substring(0, 2).toUpperCase() : "OP";
+                    querySnapshot.forEach((doc) => {
+                        const targetProfile = doc.data();
+                        const matchingInitials = targetProfile.username ? targetProfile.username.substring(0, 2).toUpperCase() : "OP";
 
-                        // Populate top status bubble tracks
-                        if (profile.statusText && profile.uid !== user.uid) {
-                            const statusItem = document.createElement('div');
-                            statusItem.className = 'status-item active-status';
-                            statusItem.title = profile.statusText;
-                            statusItem.innerHTML = `<div class="status-circle ring-gold">${initials}</div><span>${escapeHTML(profile.statusText)}</span>`;
-                            statusTray.appendChild(statusItem);
+                        if (targetProfile.statusText && targetProfile.uid !== userInstance.uid) {
+                            const statusNode = document.createElement('div');
+                            statusNode.className = 'status-item active-status';
+                            statusNode.title = targetProfile.statusText;
+                            statusNode.innerHTML = `<div class="status-circle ring-gold">${matchingInitials}</div><span>${escapeHTML(targetProfile.statusText)}</span>`;
+                            statusTray.appendChild(statusNode);
                         }
 
-                        // Populate dynamic sidebar chat targets roster list
-                        if (chatList && profile.uid !== user.uid) {
-                            const contactRow = document.createElement('div');
-                            contactRow.className = 'chat-item';
-                            contactRow.innerHTML = `
-                                <div class="avatar">${initials}</div>
+                        if (chatList && targetProfile.uid !== userInstance.uid) {
+                            const contactRowNode = document.createElement('div');
+                            contactRowNode.className = 'chat-item';
+                            contactRowNode.innerHTML = `
+                                <div class="avatar">${matchingInitials}</div>
                                 <div class="chat-info">
                                     <div class="chat-name-row">
-                                        <h4>${escapeHTML(profile.username)}</h4>
+                                        <h4>${escapeHTML(targetProfile.username)}</h4>
                                         <span class="time">Active</span>
                                     </div>
-                                    <p class="preview-text">${escapeHTML(profile.statusText || "Available")}</p>
+                                    <p class="preview-text">${escapeHTML(targetProfile.statusText || "Available in workspace")}</p>
                                 </div>`;
-                            chatList.appendChild(contactRow);
+                            chatList.appendChild(contactRowNode);
                         }
                     });
                 });
@@ -351,9 +351,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Global Utilities Helper
-    function resetSubmitButton(label) { if (loginBtn) { loginBtn.disabled = false; loginBtn.textContent = label; } }
+    // Helper Closures
+    function resetSubmitBtnState(label) { if (loginBtn) { loginBtn.disabled = false; loginBtn.textContent = label; } }
     function displayAuthError(msg) { if (authErrorMessage) { authErrorMessage.textContent = msg; authErrorMessage.style.display = "block"; } }
-    function clearErrorDisplay() { if (authErrorMessage) { authErrorMessage.style.display = "none"; } }
     function escapeHTML(str) { return str.replace(/[&<>'"]/g, t => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[t] || t)); }
 });
