@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mwamini Chat Web - Login</title>
+    <title>Mwamini Chat Web - Portal</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="welcome-page">
     <div class="auth-container">
         <h2>MWAMINI CHAT WEB</h2>
-        <p id="auth-title">Sign In to continue to WhatsApp-style chatting</p>
+        <p id="auth-title">Sign In to sync your conversation histories</p>
         
         <form id="auth-form">
             <div class="input-group" id="username-group" style="display: none;">
@@ -27,9 +27,11 @@
         <p class="toggle-text">
             <span id="toggle-link">Don't have an account? Register here</span>
         </p>
+        <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px;">
+            <a href="dashboard.html" style="color: #075e54; font-weight: bold; text-decoration: none; font-size: 14px;">⚡ Skip and enter as Guest (Search Only)</a>
+        </div>
     </div>
 
-    <!-- Firebase Compat SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
