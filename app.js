@@ -1,5 +1,3 @@
-// ====== FIREBASE CONFIGURATION ======
-// Paste your actual Web App Config keys from the Firebase Console here:
 const firebaseConfig = {
   apiKey: "AIzaSyBAvEGxHrS6b5dOgc9TpWPSMR-K2i6lIxA",
   authDomain: "mwamini-chat-web-e0d8c.firebaseapp.com",
@@ -9,27 +7,28 @@ const firebaseConfig = {
   appId: "1:780880757548:web:ac60921ed3ef873003a289",
   measurementId: "G-QZ2S2TJB8X"
 };
-// Initialize Firebase
+
+// Safely initialize Firebase instances
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 const auth = firebase.auth();
 const db = firebase.firestore();
 let storage;
-try { storage = firebase.storage(); } catch(e) {}
+try { storage = firebase.storage(); } catch(e) { console.warn("Firebase Storage unavailable", e); }
 
-// ====== STATE VARIABLES ======
+// ====== CORE GLOBAL VARIABLES ======
 let currentUserId = null;
 let currentChatId = null;
-let currentChatType = 'private'; // 'private' or 'group'
+let currentChatType = 'private'; 
 let isRegisterMode = false;
 
-// ====== REQUEST NOTIFICATION PERMISSION ======
+// ====== REQUEST WEB NOTIFICATION PERMISSIONS ======
 if (Notification.permission !== "granted" && Notification.permission !== "denied") {
     Notification.requestPermission();
 }
 
-// ====== AUTHENTICATION LOGIC (INDEX.HTML) ======
+// ====== AUTHENTICATION HANDLERS (INDEX.HTML) ======
 const authForm = document.getElementById('auth-form');
 if (authForm) {
     const toggleLink = document.getElementById('toggle-link');
@@ -47,18 +46,19 @@ if (authForm) {
 
     authForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const email = document.getElementById('auth-email').value;
+        const email = document.getElementById('auth-email').value.trim();
         const password = document.getElementById('auth-password').value;
 
         if (isRegisterMode) {
-            const name = document.getElementById('auth-username').value;
+            const name = document.getElementById('auth-username').value.trim();
             auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
                     return db.collection('users').doc(userCredential.user.uid).set({
                         uid: userCredential.user.uid,
                         name: name,
-                        email: email,
-                        status: 'online'
+                        email: email.toLowerCase(),
+                        status: 'online',
+                        statusMsg: "Hey there! I am using Mwamini Chat."
                     });
                 })
                 .then(() => { window.location.href = 'dashboard.html'; })
@@ -74,7 +74,7 @@ if (authForm) {
     });
 }
 
-// ====== DASHBOARD PROCESSES (DASHBOARD.HTML) ======
+// ====== ROUTING ROUTINES BASED ON PROFILE STATE ======
 auth.onAuthStateChanged(user => {
     if (user) {
         currentUserId = user.uid;
@@ -91,16 +91,62 @@ auth.onAuthStateChanged(user => {
 });
 
 function initDashboard() {
-    db.collection('users').doc(currentUserId).get().then(doc => {
-        if(doc.exists) document.getElementById('current-user-name').innerText = doc.data().name;
+    // Live update personal configuration parameters
+    db.collection('users').doc(currentUserId).onSnapshot(doc => {
+        if(doc.exists) {
+            const data = doc.data();
+            document.getElementById('current-user-name').innerText = data.name;
+            if(data.statusMsg) {
+                document.getElementById('current-user-status-msg').innerText = data.statusMsg;
+            }
+        }
     });
 
+    // Action implementation to mutate personalized text notes
+    document.getElementById('update-status-btn').addEventListener('click', () => {
+        const currentNote = document.getElementById('current-user-status-msg').innerText;
+        const newNote = prompt("Update your profile status note:", currentNote);
+        if (newNote !== null && newNote.trim() !== "") {
+            db.collection('users').doc(currentUserId).update({
+                statusMsg: newNote.trim()
+            }).catch(err => alert("Could not update status: " + err.message));
+        }
+    });
+
+    // Logout handling
     document.getElementById('logout-btn').addEventListener('click', () => {
         db.collection('users').doc(currentUserId).update({ status: 'offline' }).then(() => {
             auth.signOut();
         });
     });
 
+    // Explicit lookup to manually initialize a direct single chat
+    const addUserBtn = document.getElementById('add-user-btn');
+    if (addUserBtn) {
+        addUserBtn.addEventListener('click', () => {
+            const emailToFind = document.getElementById('search-email-input').value.trim().toLowerCase();
+            if (!emailToFind) return;
+
+            db.collection('users').where('email', '==', emailToFind).get().then(snapshot => {
+                if (snapshot.empty) {
+                    alert("No user found with that email address!");
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const targetUserData = doc.data();
+                    if (targetUserData.uid === currentUserId) {
+                        alert("You cannot add yourself!");
+                        return;
+                    }
+                    startPrivateChat(targetUserData.uid, targetUserData.name);
+                    document.getElementById('search-email-input').value = '';
+                });
+            }).catch(err => alert("Error finding user: " + err.message));
+        });
+    }
+
+    // Group generation triggers
     document.getElementById('create-group-btn').addEventListener('click', () => {
         const groupName = prompt("Enter new Group Name:");
         if (!groupName) return;
@@ -116,6 +162,7 @@ function initDashboard() {
     setupMessageSender();
 }
 
+// ====== RENDER LIVE SIDEBAR ITEMS ======
 function loadSidebarChannels() {
     const sidebarContainer = document.getElementById('chats-sidebar-list');
 
@@ -130,10 +177,15 @@ function loadSidebarChannels() {
             const userData = doc.data();
             if (userData.uid === currentUserId) return;
 
+            const displayNote = userData.statusMsg ? userData.statusMsg : "No status set.";
+
             const row = document.createElement('div');
             row.className = 'user-item';
             row.innerHTML = `
-                <div><strong>${userData.name}</strong></div>
+                <div style="display: flex; flex-direction: column; gap: 3px; overflow: hidden; flex: 1;">
+                    <strong style="color: #111b21;">${userData.name}</strong>
+                    <span style="font-size: 12px; color: #667781; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${displayNote}</span>
+                </div>
                 <div class="status-dot ${userData.status === 'online' ? 'online' : 'offline'}"></div>
             `;
             row.addEventListener('click', () => startPrivateChat(userData.uid, userData.name));
@@ -157,11 +209,21 @@ function loadSidebarChannels() {
     });
 }
 
+// ====== VERIFY AND SET ACTIVE CONVERSATION ROOMS ======
 function startPrivateChat(targetUid, targetName) {
     currentChatType = 'private';
     document.getElementById('no-chat-selected').style.display = 'none';
     document.getElementById('active-chat-container').style.display = 'flex';
     document.getElementById('active-chat-title').innerText = targetName;
+
+    // Display the recipient's status note right at the top header area
+    db.collection('users').doc(targetUid).get().then(doc => {
+        if(doc.exists && doc.data().statusMsg) {
+            document.getElementById('active-chat-status').innerText = doc.data().statusMsg;
+        } else {
+            document.getElementById('active-chat-status').innerText = "";
+        }
+    });
 
     db.collection('chats')
       .where('isGroup', '==', false)
@@ -189,6 +251,7 @@ function startGroupChat(groupId, groupName) {
     document.getElementById('no-chat-selected').style.display = 'none';
     document.getElementById('active-chat-container').style.display = 'flex';
     document.getElementById('active-chat-title').innerText = groupName;
+    document.getElementById('active-chat-status').innerText = "Group conversation";
 
     db.collection('chats').doc(groupId).update({
         participants: firebase.firestore.FieldValue.arrayUnion(currentUserId)
@@ -197,6 +260,7 @@ function startGroupChat(groupId, groupName) {
     listenForMessages(groupId);
 }
 
+// ====== REAL-TIME MESSAGE STREAM ENGINE ======
 let messagesUnsubscribe = null;
 function listenForMessages(chatId) {
     currentChatId = chatId;
@@ -238,6 +302,7 @@ function listenForMessages(chatId) {
             });
             msgBox.scrollTop = msgBox.scrollHeight;
             
+            // Notification dispatch
             if(!snapshot.metadata.hasPendingWrites && snapshot.docs.length > 0) {
                let lastMsg = snapshot.docs[snapshot.docs.length - 1].data();
                if(lastMsg.senderId !== currentUserId && Notification.permission === "granted") {
@@ -247,6 +312,7 @@ function listenForMessages(chatId) {
         });
 }
 
+// ====== OUTPUT DISPATCH CONTROL ======
 function setupMessageSender() {
     const sendBtn = document.getElementById('send-btn');
     const msgInput = document.getElementById('message-input');
@@ -261,7 +327,7 @@ function setupMessageSender() {
         db.collection('users').doc(currentUserId).get().then(userDoc => {
             const senderName = userDoc.data().name;
 
-            if (file) {
+            if (file && storage) {
                 const fileRef = storage.ref().child(`chats/${currentChatId}/${Date.now()}_${file.name}`);
                 fileRef.put(file).then(snapshot => snapshot.ref.getDownloadURL()).then(downloadUrl => {
                     db.collection('chats').doc(currentChatId).collection('messages').add({
@@ -290,6 +356,7 @@ function setupMessageSender() {
     msgInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') sendTrigger(); });
 }
 
+// ====== MESSAGE MODIFICATION HELPER UTILITIES ======
 window.editMessage = function(chatId, msgId) {
     const oldText = document.getElementById(`text-${msgId}`).innerText;
     const newText = prompt("Edit your message:", oldText);
