@@ -3,38 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mwamini Chat Web - Portal</title>
+    <title>MWAMINI CHAT WEB - Secure Access</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="welcome-page">
-    <div class="auth-container">
-        <h2>MWAMINI CHAT WEB</h2>
-        <p id="auth-title">Sign In to sync your conversation histories</p>
+<body class="auth-page">
+    <div class="glass-container auth-card">
+        <div class="auth-header">
+            <div class="logo-badge">M</div>
+            <h1>MWAMINI CHAT WEB</h1>
+            <p class="subtitle">PREMIUM COMMUNICATION NODE</p>
+        </div>
         
-        <form id="auth-form">
-            <div class="input-group" id="username-group" style="display: none;">
-                <input type="text" id="auth-username" placeholder="Full Name">
+        <form id="loginForm" class="auth-form" action="dashboard.html">
+            <div class="input-group">
+                <span class="icon">✉</span>
+                <input type="email" placeholder="System Cloud Email" required>
             </div>
             <div class="input-group">
-                <input type="email" id="auth-email" placeholder="Email Address" required>
+                <span class="icon">🔒</span>
+                <input type="password" placeholder="Account Token Key" required>
             </div>
-            <div class="input-group">
-                <input type="password" id="auth-password" placeholder="Password" required>
-            </div>
-            <button type="submit" id="auth-btn">Log In</button>
+            
+            <button type="submit" class="btn-primary">Access Communication Core</button>
         </form>
 
-        <p class="toggle-text">
-            <span id="toggle-link">Don't have an account? Register here</span>
-        </p>
-        <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px;">
-            <a href="dashboard.html" style="color: #075e54; font-weight: bold; text-decoration: none; font-size: 14px;">⚡ Skip and enter as Guest (Search Only)</a>
-        </div>
-    </div>
+        <div class="divider"><span>OR DATA FEDERATION</span></div>
 
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script src="app.js"></script>
+        <button class="btn-secondary" onclick="window.location.href='dashboard.html'">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google logo" class="google-icon">
+            Federate Identity via Google
+        </button>
+
+        <p class="auth-footer">New operator deployment? <a href="#">Request Access Signature</a></p>
+    </div>
 </body>
 </html>
