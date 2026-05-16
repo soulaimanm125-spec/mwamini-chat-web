@@ -1,12 +1,13 @@
 // ====== FIREBASE CONFIGURATION ======
 // Replace placeholders with your actual Web App Config keys from your Firebase Console:
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyBAvEGxHrS6b5dOgc9TpWPSMR-K2i6lIxA",
+  authDomain: "mwamini-chat-web-e0d8c.firebaseapp.com",
+  projectId: "mwamini-chat-web-e0d8c",
+  storageBucket: "mwamini-chat-web-e0d8c.firebasestorage.app",
+  messagingSenderId: "780880757548",
+  appId: "1:780880757548:web:ac60921ed3ef873003a289",
+  measurementId: "G-QZ2S2TJB8X"
 };
 
 // Safely initialize Firebase instances
