@@ -15,12 +15,12 @@
                     <h2>MWAMINI CHAT WEB</h2>
                 </div>
                 <div class="current-user-status-card">
-                    <span id="current-user-name">Loading Profile...</span>
-                    <span id="current-user-status-msg">Hey there! I am using Mwamini Chat.</span>
+                    <span id="current-user-name">Guest Mode Running...</span>
+                    <span id="current-user-status-msg">Sign in to change profile features.</span>
                 </div>
                 <div class="profile-action-row">
                     <button id="update-status-btn" class="gold-btn-outline">✏️ Edit Status Bio</button>
-                    <button id="logout-btn" class="danger-btn-link">Logout</button>
+                    <button id="logout-btn" class="danger-btn-link">Logout / Exit</button>
                 </div>
             </header>
 
@@ -30,7 +30,7 @@
 
             <div class="search-bar-container">
                 <div class="search-input-wrapper">
-                    <input type="text" id="search-email-input" placeholder="Search people by exact email...">
+                    <input type="text" id="search-email-input" placeholder="Find anyone by exact email...">
                     <span class="search-icon">
                         <svg viewBox="0 0 24 24" width="18" height="18"><path fill="#8696a0" d="M15.004 13.914l5.3 5.3-1.09 1.09-5.3-5.3a7.5 7.5 0 1 1 1.09-1.09zm-5.004.086a6 6 0 1 0 0-12 6 6 0 0 0 0 12z"/></svg>
                     </span>
@@ -47,14 +47,14 @@
                 <div class="branding-splash">
                     <div class="splash-logo">M</div>
                     <h2>Welcome to Mwamini Chat Web</h2>
-                    <p>Select an active contact or a group chat session from the left navigation panel to start sending messages.</p>
+                    <p>Search any profile using their email address above to open up instant messaging pipelines instantly.</p>
                 </div>
             </div>
 
             <div id="active-chat-container" class="active-chat-panel" style="display: none;">
                 <header class="chat-header">
-                    <div class="active-chat-details">
-                        <h3 id="active-chat-title">Loading Target Chat...</h3>
+                    <div class="active-user-info">
+                        <h3 id="active-chat-title">Chat Target Workspace</h3>
                         <span id="active-chat-status"></span>
                     </div>
                     <div class="chat-header-actions">
@@ -66,7 +66,7 @@
                     </div>
 
                 <footer class="chat-footer">
-                    <label for="media-input" class="attach-btn" title="Upload Media Attachment">📎</label>
+                    <label for="media-input" class="attach-btn" title="Send Attachment">📎</label>
                     <input type="file" id="media-input" accept="image/*,video/*" style="display: none;">
                     
                     <input type="text" id="message-input" placeholder="Type a message here...">
