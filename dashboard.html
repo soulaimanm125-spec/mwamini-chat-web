@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MWAMINI CHAT WEB - Workspace</title>
+    <title>Mwamini Chat - Workspace</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,8 +11,8 @@
         <aside class="sidebar glass-effect">
             <div class="sidebar-header">
                 <div class="user-profile">
-                    <div class="avatar border-gold">M</div>
-                    <span class="username">Operator Main</span>
+                    <div class="avatar border-gold">U</div>
+                    <span class="username">Guest User</span>
                 </div>
                 <button class="logout-btn" id="logoutBtn">✕</button>
             </div>
@@ -25,19 +25,19 @@
                         <span>My Status</span>
                     </div>
                     <div class="status-item active-status">
-                        <div class="status-circle ring-gold">A1</div>
-                        <span>Alpha 1</span>
+                        <div class="status-circle ring-gold">T1</div>
+                        <span>Team Alpha</span>
                     </div>
                     <div class="status-item active-status">
-                        <div class="status-circle ring-gold">ENG</div>
-                        <span>Engine</span>
+                        <div class="status-circle ring-gold">DEV</div>
+                        <span>Dev Channel</span>
                     </div>
                 </div>
             </div>
 
             <div class="search-bar">
                 <span class="search-icon">🔍</span>
-                <input type="text" placeholder="Search user or exact email...">
+                <input type="text" placeholder="Search chats or users...">
             </div>
 
             <div class="chat-list" id="chatList">
@@ -45,10 +45,10 @@
                     <div class="avatar">C1</div>
                     <div class="chat-info">
                         <div class="chat-name-row">
-                            <h4>Secure Connection Alpha</h4>
-                            <span class="time">20:16</span>
+                            <h4>General Discussion</h4>
+                            <span class="time">12:34</span>
                         </div>
-                        <p class="preview-text">Encrypted synchronization pipeline ready.</p>
+                        <p class="preview-text">Welcome to the workspace chat view...</p>
                     </div>
                 </div>
             </div>
@@ -59,17 +59,17 @@
                 <div class="active-chat-info">
                     <div class="avatar gold-bg">C1</div>
                     <div>
-                        <h3>Secure Connection Alpha</h3>
-                        <p class="status-indicator"><span class="pulse-dot"></span> End-to-end cloud storage</p>
+                        <h3>General Discussion</h3>
+                        <p class="status-indicator"><span class="pulse-dot"></span> Cloud hosted environment</p>
                     </div>
                 </div>
             </div>
 
             <div class="messages-window" id="messagesWindow">
                 <div class="message received">
-                    <span class="sender">System Admin</span>
-                    <p>Welcome to MWAMINI CHAT WEB interface node.</p>
-                    <span class="msg-time">20:15</span>
+                    <span class="sender">Workspace Bot</span>
+                    <p>Welcome to the Mwamini Chat interface template.</p>
+                    <span class="msg-time">12:30</span>
                 </div>
             </div>
 
@@ -86,7 +86,7 @@
                     <input type="file" id="fileAttachment" style="display: none;">
                 </label>
                 
-                <input type="text" id="messageInput" placeholder="Write your encrypted message..." autocomplete="off">
+                <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off">
                 <button type="submit" class="send-btn">➔</button>
             </form>
         </main>
@@ -94,12 +94,12 @@
 
     <div class="modal" id="statusModal" style="display: none;">
         <div class="modal-content glass-effect">
-            <h3>Publish Status Update</h3>
-            <p>Share a quick update or thought with the operational network.</p>
-            <input type="text" id="statusTextInput" placeholder="What's happening, Operator?..." maxlength="60">
+            <h3>Update Status</h3>
+            <p>Share what you are currently working on with your team.</p>
+            <input type="text" id="statusTextInput" placeholder="What's on your mind?..." maxlength="60">
             <div class="modal-actions">
                 <button type="button" class="btn-cancel" id="closeStatusModal">Cancel</button>
-                <button type="button" class="btn-primary-small" id="submitStatusBtn">Publish</button>
+                <button type="button" class="btn-primary-small" id="submitStatusBtn">Update</button>
             </div>
         </div>
     </div>
