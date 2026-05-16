@@ -14,27 +14,30 @@
             <p class="subtitle">PREMIUM COMMUNICATION NODE</p>
         </div>
         
-        <form id="loginForm" class="auth-form" action="dashboard.html">
+        <form id="loginForm" class="auth-form">
+            <div id="authErrorMessage" class="error-msg" style="display: none;"></div>
+            
             <div class="input-group">
                 <span class="icon">✉</span>
-                <input type="email" placeholder="System Cloud Email" required>
+                <input type="email" id="loginEmail" placeholder="System Cloud Email" required>
             </div>
             <div class="input-group">
                 <span class="icon">🔒</span>
-                <input type="password" placeholder="Account Token Key" required>
+                <input type="password" id="loginPassword" placeholder="Account Token Key" required>
             </div>
             
-            <button type="submit" class="btn-primary">Access Communication Core</button>
+            <button type="submit" class="btn-primary" id="loginBtn">Access Communication Core</button>
         </form>
 
         <div class="divider"><span>OR DATA FEDERATION</span></div>
 
-        <button class="btn-secondary" onclick="window.location.href='dashboard.html'">
+        <button class="btn-secondary" id="googleAuthBtn">
             <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google logo" class="google-icon">
             Federate Identity via Google
         </button>
 
         <p class="auth-footer">New operator deployment? <a href="#">Request Access Signature</a></p>
     </div>
+    <script src="app.js"></script>
 </body>
 </html>
