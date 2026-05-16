@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mwamini Chat Web - Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar (Left side) -->
+        <aside class="sidebar">
+            <header class="sidebar-header" style="height: auto; padding: 15px 16px; flex-direction: column; align-items: stretch; gap: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div class="user-profile" style="display: flex; flex-direction: column; gap: 2px;">
+                        <span id="current-user-name" style="font-weight: bold;">Loading...</span>
+                        <!-- Status Message Display -->
+                        <span id="current-user-status-msg" style="font-size: 12px; color: #667781; font-style: italic;">Hey there! I am using Mwamini Chat.</span>
+                    </div>
+                    <div class="header-actions">
+                        <button id="create-group-btn" title="Create Group">➕ Group</button>
+                        <button id="logout-btn">Logout</button>
+                    </div>
+                </div>
+                <!-- Edit Status Trigger Button -->
+                <button id="update-status-btn" style="background: transparent; color: #008069; border: 1px solid #008069; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; align-self: flex-start;">✏️ Update Status Note</button>
+            </header>
+
+            <!-- Search and Add User Input Fields -->
+            <div class="search-bar" style="display: flex; gap: 5px; align-items: center; padding: 10px;">
+                <input type="text" id="search-email-input" placeholder="Enter user's exact email..." style="flex: 1;">
+                <button id="add-user-btn" style="background: #008069; color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer;">Add</button>
+            </div>
+
+            <!-- Users and Groups Lists -->
+            <div class="chats-list" id="chats-sidebar-list">
+                <!-- Populated dynamically via app.js -->
+            </div>
+        </aside>
+
+        <!-- Chat Window (Right side) -->
+        <main class="chat-window">
+            <!-- Default placeholder screen -->
+            <div id="no-chat-selected" class="no-chat">
+                <h2>Welcome to Mwamini Chat Web</h2>
+                <p>Select a user or a group from the left, or search an email above to start messaging.</p>
+            </div>
+
+            <!-- Active Chat screen -->
+            <div id="active-chat-container" style="display: none;">
+                <header class="chat-header">
+                    <div class="active-user-info">
+                        <h3 id="active-chat-title">Chat Target</h3>
+                        <span id="active-chat-status" style="font-size: 12px; color: #667781; display: block; margin-top: 2px;"></span>
+                    </div>
+                </header>
+
+                <div class="messages-container" id="messages-box">
+                    <!-- Chat messages appear here -->
+                </div>
+
+                <footer class="chat-footer">
+                    <!-- File upload for photos/videos -->
+                    <label for="media-input" class="attach-btn" title="Send Photo/Video">📎</label>
+                    <input type="file" id="media-input" accept="image/*,video/*" style="display:none;">
+                    
+                    <input type="text" id="message-input" placeholder="Type a message">
+                    <button id="send-btn">Send</button>
+                </footer>
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
